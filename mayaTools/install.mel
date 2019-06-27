@@ -1,0 +1,106 @@
+// ====================================================================
+// author       : ChenLiang.Miao
+// email        : spirit_az@foxmail.com
+// QQ           : 1204172445
+// 该插件由苗臣亮原创，未经允许不得擅自修改、传播。侵权必究。
+// ====================================================================
+
+// ====================================================================
+// ====================================================================
+proc string stripLastSlash( string $path )
+{
+	if ( (match( "^/$", $path ) == "") && // Root dir
+		 (match( "^[A-Za-z]:/$", $path ) == "" ) ) // X:/ on Windows
+	{
+		// Strip off last '/', if it exists
+		$path = substitute("/$", $path, "");
+	}
+	return $path;
+}
+
+proc string dirname( string $path )
+{
+	if ( `about -nt` || `about -mac`)
+		$path = convert( $path );
+
+	$path = stripLastSlash( $path );
+
+	string $dirname;
+	// If the path starts with "//" we'll assume this is a UNC path and
+	// treat this as root...
+	if ( match( "^//", $path ) != "" )
+	{
+		// Match first two slashes and everything up to the last slash
+		$dirname = match( "^//.*/", $path );
+		// Maybe there is no slash other than these first two -
+		// we'll keep the path we entered this block with
+		if ( size( $dirname ) == 0 )
+			$dirname = $path;
+		else
+			$dirname = stripLastSlash( $dirname );
+	}
+	else
+	{
+		// Match the beginning up to the first slash
+		$dirname = match( "^.*/", $path );
+	}
+
+	$dirname = stripLastSlash( $dirname );
+
+	return $dirname;
+}
+
+proc string folder(string $path){
+    string $f = dirname($path);
+    $array = stringToStringArray($f, "/");
+    $length = size($array);
+    if ($length == 1){
+        return $array[0];
+    }
+    else {
+    print($array);
+        return $array[$length - 1];
+    }
+
+}
+// ====================================================================
+// ====================================================================
+global string $gShelfTopLevel;
+string $currentShelf = `tabLayout -query -selectTab $gShelfTopLevel`;
+setParent $currentShelf;
+string $asInstallScriptLocation=`asInstallScriptLocation`;
+string $maya_script_path = dirname(dirname($asInstallScriptLocation));
+
+string $scriptName=folder($asInstallScriptLocation);
+
+
+string $command  = "import sys\r\n" +
+"in_path='" +$maya_script_path + "'\r\n" +
+"in_path in sys.path or sys.path.append(in_path)\r\n" +
+"from " + $scriptName+".scripts" +" import openUI\r\n"+
+"reload(openUI)\r\n" +
+"openUI.show()";
+
+string $icon=dirname($asInstallScriptLocation)+"/icons/MCL.png";
+shelfButton
+	-command $command
+	-annotation $scriptName
+	-label $scriptName
+	-image $icon
+	-image1 $icon
+	-sourceType "python"
+;
+
+
+//--installTemplate resume--//
+print ("\n// "+$scriptName+" has been added to current shelf.\n");
+
+global proc asInstallScriptLocator (){}
+
+global proc string asInstallScriptLocation ()
+{
+string $whatIs=`whatIs asInstallScriptLocator`;
+string $fullPath=`substring $whatIs 25 999`;
+return $fullPath;
+}
+
