@@ -198,7 +198,7 @@ def listDel(lists):
 
 def get_new_ver(in_path):
     os.path.exists(in_path) or os.makedirs(in_path)
-    vers = getListDirK(in_path, 'dir', '^v\d{3}$')
+    vers = sorted(getListDirK(in_path, 'dir', '^v\d{3}$'), key=lambda x: re.findall('^\d{3}$', x)[0])[0]
     return get_new_version(vers)
 
 
