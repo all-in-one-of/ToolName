@@ -13,7 +13,7 @@ reload(exUI)
 
 # function +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+ #
 
-maya_win = exUI.getMainWindow()
+houdini_win = exUI.getMainWindow()
 __abs_path__ = scriptTool.getScriptPath().replace('\\', '/')
 main_win_name = 'tool name'
 scriptVersion = 'version by author'
@@ -35,7 +35,7 @@ windowClss, baseClass = exUI.loadUi(getUIPath())
 # +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+ #
 
 class mainFunc(windowClss, baseClass):
-    def __init__(self, parent=maya_win):
+    def __init__(self, parent=houdini_win):
         super(mainFunc, self).__init__(parent)
         self.setupUi(self)
 
@@ -49,12 +49,15 @@ class mainFunc(windowClss, baseClass):
 
 
 def show():
-    app = exUI.QApplication.instance()
-    if app is None:
-        app = exUI.QApplication(['houdini'])
+    app = None
+    if exUI.USE_PYQT_MODULE:
+        import pyqt_thread_helper
+        app = pyqt_thread_helper.getApplication()
+
     exUI.UIExists(main_win_name, AsBool=False) and exUI.deleteUI(main_win_name)
     anim_path = icon_path('waiting.gif')
     splash = exUI.mSplashScreen(anim_path, exUI.Qt.WindowStaysOnTopHint)
+    splash.setParent(houdini_win)
     splash.show()
     ui = mainFunc()  # type: exUI.QMainWindow
     # 设置名称 一定不可以在初始化的时候设置，否则会出问题
@@ -68,8 +71,6 @@ def show():
         exUI.QCoreApplication.processEvents()
     splash.finish(ui)
 
-    if exUI.USE_PYQT_MODULE:
+    if app:
         import pyqt_houdini
         pyqt_houdini.exec_(app, splash, ui)
-    else:
-        app.exec_()

@@ -208,7 +208,7 @@ class mSplashScreen(QSplashScreen):
     def __init__(self, animation, flag):
         super(mSplashScreen, self).__init__(QPixmap(), flag)
         self.movie = QMovie(animation)
-        # self.movie.setParent(self)
+        self.movie.setParent(self)
         self.movie.frameChanged.connect(self.onNextFrame)
 
     def onNextFrame(self):
@@ -220,6 +220,7 @@ class mSplashScreen(QSplashScreen):
         self.movie.start()
 
     def finish(self, widget):
+        self.setParent(None)
         widget.show()
         super(mSplashScreen, self).finish(widget)
         # deleteUI(self.movie.objectName())
