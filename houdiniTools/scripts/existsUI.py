@@ -134,19 +134,6 @@ def UIExists(Name, AsBool=True):
         return None
 
 
-def Raise(Name):
-    """
-    UI 是否已经生成
-    :param Name: 窗口名称
-    :return:
-    """
-    qobject = GetQtWidget(Name)
-    if qobject:
-        return qobject
-    else:
-        return False
-
-
 def deleteUI(Name):
     """
     根据名字彻底清除删除UI
@@ -154,11 +141,12 @@ def deleteUI(Name):
     :return:
     """
     qObject = GetQtWidget(Name)
-    qObject.setParent(None)
-    if USE_PYQT_MODULE:
-        sip.delete(qObject)
-    else:
-        shiboken.delete(qObject)
+    qObject.setObjectName('doDelete')
+    # qObject.setParent(None)
+    # if USE_PYQT_MODULE:
+    #     sip.delete(qObject)
+    # else:
+    #     shiboken.delete(qObject)
 
 
 def loadUi(uiPath):
@@ -254,7 +242,7 @@ class mSplashScreen_new(QSplashScreen):
         self.movie.start()
 
     def finish(self, widget):
+        self.setParent(None)
         widget.show()
-        deleteUI(self.movie)
-        deleteUI(self)
+        super(mSplashScreen_new, self).finish(widget)
 
