@@ -141,8 +141,8 @@ def deleteUI(Name):
     :return:
     """
     qObject = GetQtWidget(Name)
-    qObject.setObjectName('doDelete')
-    # qObject.setParent(None)
+    qObject.setObjectName('deleteUI')
+    qObject.setParent(None)
     # if USE_PYQT_MODULE:
     #     sip.delete(qObject)
     # else:
