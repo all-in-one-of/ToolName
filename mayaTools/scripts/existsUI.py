@@ -73,7 +73,10 @@ def GetWindow(windowName):
 
 
 def GetFullName(qObj):
-    pointer = sip.unwrapinstance(qObj)
+    if USE_PYQT_MODULE:
+        pointer = sip.unwrapinstance(qObj)
+    else:
+        pointer = long(shiboken.getCppPointer(qObj)[0])
     if type(pointer) == long:
         windowString = mui.MQtUtil.fullName(pointer)
         if windowString:
@@ -82,6 +85,7 @@ def GetFullName(qObj):
             return ''
     else:
         return GetQtWidget(qObj.objectName(), LongName=True)[-1]
+
 
 
 def wrapInstance(widget):
