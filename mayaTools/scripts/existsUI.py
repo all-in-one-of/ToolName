@@ -153,7 +153,9 @@ def deleteUI(Name):
     if USE_PYQT_MODULE:
         sip.delete(qObject)
     else:
-        shiboken.delete(qObject)
+        QObject.setObjectName('delete')
+        QObject.setParent(None)
+        # shiboken.delete(qObject)
 
 
 def loadUi(uiPath):
@@ -203,6 +205,7 @@ class mSplashScreen(QSplashScreen):
     def __init__(self, animation, flag):
         super(mSplashScreen, self).__init__(QPixmap(), flag)
         self.movie = QMovie(animation)
+        self.movie.setParent(self)
         self.movie.frameChanged.connect(self.onNextFrame)
 
     def onNextFrame(self):
@@ -227,6 +230,7 @@ class mSplashScreen_new(QSplashScreen):
     def __init__(self, animation, flag, widget):
         super(mSplashScreen_new, self).__init__(QPixmap(), flag)
         self.movie = QMovie(animation)
+        self.movie.setParent(self)
         self.movie.frameChanged.connect(self.onNextFrame)
         self.count = self.movie.frameCount()
         self.step = 0
@@ -248,3 +252,4 @@ class mSplashScreen_new(QSplashScreen):
         widget.show()
         deleteUI(self.movie.objectName())
         deleteUI(self.objectName())
+
