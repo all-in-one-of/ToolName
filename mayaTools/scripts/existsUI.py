@@ -215,8 +215,8 @@ class mSplashScreen(QSplashScreen):
 
     def finish(self, widget):
         widget.show()
-        deleteUI(self.movie)
-        deleteUI(self)
+        deleteUI(self.movie.objectName())
+        deleteUI(self.objectName())
 
 
 class mSplashScreen_new(QSplashScreen):
@@ -246,5 +246,5 @@ class mSplashScreen_new(QSplashScreen):
 
     def finish(self, widget):
         widget.show()
-        deleteUI(self.movie)
-        deleteUI(self)
+        deleteUI(self.movie.objectName())
+        deleteUI(self.objectName())
